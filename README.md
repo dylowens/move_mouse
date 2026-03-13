@@ -10,7 +10,37 @@ Small Windows tray app that nudges the mouse cursor slightly on a timer.
 - Lets you `Start`, `Stop`, or `Exit` from the tray icon menu
 - Uses only Python standard library modules
 
-## Run on Windows
+## Run on Windows without Python
+
+PowerShell is available on current Windows installs, so you can run the tray app directly without installing Python:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\mouse_jiggler.ps1
+```
+
+If you want to use PowerShell 7 specifically:
+
+```powershell
+pwsh -File .\mouse_jiggler.ps1
+```
+
+The app will start in the tray and begin nudging the mouse immediately. Right-click the tray icon to open the menu.
+
+## Build a standalone EXE
+
+This repo also includes a native Windows Forms tray app in [`MouseJigglerExe`](/C:/Users/dylow/OneDrive/Documents/Playground/MouseJigglerExe/MouseJigglerExe.csproj). It can be published as a single-file self-contained executable:
+
+```powershell
+dotnet publish .\MouseJigglerExe\MouseJigglerExe.csproj -c Release
+```
+
+The generated executable will be:
+
+```text
+.\MouseJigglerExe\bin\Release\net9.0-windows\win-x64\publish\move_mouse.exe
+```
+
+## Run on Windows with Python
 
 1. Install Python 3 for Windows.
 2. Open Command Prompt in this folder.
@@ -19,8 +49,6 @@ Small Windows tray app that nudges the mouse cursor slightly on a timer.
 ```bat
 python mouse_jiggler.py
 ```
-
-The app will start in the tray and begin nudging the mouse immediately. Right-click the tray icon to open the menu.
 
 ## Download the EXE from GitHub Releases
 
@@ -46,6 +74,7 @@ The executable will be created under `dist\move_mouse.exe`.
 
 ## Notes
 
-- This script targets Windows because it uses Win32 cursor APIs.
+- Both implementations target Windows because they use Win32 cursor APIs.
+- [`mouse_jiggler.ps1`](/C:/Users/dylow/OneDrive/Documents/Playground/mouse_jiggler.ps1) does not require Python on the host machine.
 - Double-clicking the tray icon toggles start/stop.
 - If your company manages inactivity policies, make sure you are allowed to use software like this.

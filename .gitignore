@@ -6,3 +6,7 @@ __pycache__/
 build/
 dist/
 *.spec
+bin/
+obj/
+*.exe
+*.pdb
