@@ -16,19 +16,17 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
         with:
-          python-version: "3.12"
-
-      - name: Install PyInstaller
-        run: python -m pip install --upgrade pip pyinstaller
+          dotnet-version: "9.0.x"
 
       - name: Build EXE
-        run: pyinstaller --noconsole --onefile --name move_mouse mouse_jiggler.py
+        run: dotnet publish .\MouseJigglerExe\MouseJigglerExe.csproj -c Release -r win-x64 -o .\release-assets
 
       - name: Upload release asset
         if: github.event_name == 'release'
         uses: softprops/action-gh-release@v2
         with:
-          files: dist/move_mouse.exe
+          files: .\release-assets\move_mouse.exe
+          fail_on_unmatched_files: true

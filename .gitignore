@@ -1,8 +1,6 @@
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-
 build/
-dist/
-*.spec
+bin/
+obj/
+*.exe
+*.pdb
+release-assets/

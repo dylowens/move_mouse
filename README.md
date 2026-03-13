@@ -4,27 +4,46 @@ Small Windows tray app that nudges the mouse cursor slightly on a timer.
 
 ## What it does
 
-- Moves the mouse by a small number of pixels
+- Moves the mouse 50 pixels every 15 seconds
+- Alternates left and right so the cursor oscillates and returns to the same resting position
 - Default interval is 15 seconds
 - Starts in the Windows system tray / notification area
 - Lets you `Start`, `Stop`, or `Exit` from the tray icon menu
-- Uses only Python standard library modules
+- Runs directly on Windows without requiring an extra runtime install
 
 ## Run on Windows
 
-1. Install Python 3 for Windows.
-2. Open Command Prompt in this folder.
-3. Run:
+PowerShell is available on current Windows installs, so you can run the tray app directly:
 
-```bat
-python mouse_jiggler.py
+```powershell
+powershell -ExecutionPolicy Bypass -File .\mouse_jiggler.ps1
+```
+
+If you want to use PowerShell 7 specifically:
+
+```powershell
+pwsh -File .\mouse_jiggler.ps1
 ```
 
 The app will start in the tray and begin nudging the mouse immediately. Right-click the tray icon to open the menu.
 
+## Build a standalone EXE
+
+This repo includes a native Windows Forms tray app in [`MouseJigglerExe`](/C:/Users/dylow/OneDrive/Documents/Playground/MouseJigglerExe/MouseJigglerExe.csproj). Build it locally with:
+
+```powershell
+dotnet publish .\MouseJigglerExe\MouseJigglerExe.csproj -c Release -r win-x64 -o .\release-assets
+```
+
+The generated executable will be:
+
+```text
+.\release-assets\move_mouse.exe
+```
+
 ## Download the EXE from GitHub Releases
 
-Once this repo is on GitHub, publishing a release will trigger GitHub Actions to build a Windows executable and attach `move_mouse.exe` to that release automatically.
+Publishing a GitHub release triggers GitHub Actions to build `move_mouse.exe` and attach it to that release automatically.
 
 Typical flow:
 
@@ -33,19 +52,8 @@ Typical flow:
 3. Wait for the `Build Windows Release` workflow to finish.
 4. Download `move_mouse.exe` from the release page.
 
-## Optional: local build
-
-If you want a standalone `.exe`, install PyInstaller and build it:
-
-```bat
-pip install pyinstaller
-pyinstaller --noconsole --onefile --name move_mouse mouse_jiggler.py
-```
-
-The executable will be created under `dist\move_mouse.exe`.
-
 ## Notes
 
-- This script targets Windows because it uses Win32 cursor APIs.
+- [`mouse_jiggler.ps1`](/C:/Users/dylow/OneDrive/Documents/Playground/mouse_jiggler.ps1) and [`Program.cs`](/C:/Users/dylow/OneDrive/Documents/Playground/MouseJigglerExe/Program.cs) both target Windows because they use Win32 cursor APIs.
 - Double-clicking the tray icon toggles start/stop.
 - If your company manages inactivity policies, make sure you are allowed to use software like this.
