@@ -22,16 +22,27 @@ python mouse_jiggler.py
 
 The app will start in the tray and begin nudging the mouse immediately. Right-click the tray icon to open the menu.
 
-## Optional: build an EXE
+## Download the EXE from GitHub Releases
+
+Once this repo is on GitHub, publishing a release will trigger GitHub Actions to build a Windows executable and attach `move_mouse.exe` to that release automatically.
+
+Typical flow:
+
+1. Push the repo to GitHub.
+2. Create a tag and GitHub release.
+3. Wait for the `Build Windows Release` workflow to finish.
+4. Download `move_mouse.exe` from the release page.
+
+## Optional: local build
 
 If you want a standalone `.exe`, install PyInstaller and build it:
 
 ```bat
 pip install pyinstaller
-pyinstaller --noconsole --onefile --name MouseJiggler mouse_jiggler.py
+pyinstaller --noconsole --onefile --name move_mouse mouse_jiggler.py
 ```
 
-The executable will be created under `dist\MouseJiggler.exe`.
+The executable will be created under `dist\move_mouse.exe`.
 
 ## Notes
 
