@@ -11,9 +11,9 @@ Small Windows tray app that nudges the mouse cursor slightly on a timer.
 - Lets you `Start`, `Stop`, or `Exit` from the tray icon menu
 - Runs directly on Windows without requiring an extra runtime install
 
-## Run on Windows without Python
+## Run on Windows
 
-PowerShell is available on current Windows installs, so you can run the tray app directly without installing Python:
+PowerShell is available on current Windows installs, so you can run the tray app directly:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\mouse_jiggler.ps1
@@ -32,27 +32,13 @@ The app will start in the tray and begin nudging the mouse immediately. Right-cl
 This repo also includes a native Windows Forms tray app in [`MouseJigglerExe`](/C:/Users/dylow/OneDrive/Documents/Playground/MouseJigglerExe/MouseJigglerExe.csproj). It can be published as a single-file self-contained executable:
 
 ```powershell
-dotnet publish .\MouseJigglerExe\MouseJigglerExe.csproj -c Release
+dotnet publish .\MouseJigglerExe\MouseJigglerExe.csproj -c Release -r win-x64 -o .\release-assets
 ```
 
 The generated executable will be:
 
 ```text
-.\MouseJigglerExe\bin\Release\net9.0-windows\win-x64\publish\move_mouse.exe
-```
-
-## Run on Windows with Python
-
-PowerShell is available on current Windows installs, so you can run the tray app directly:
-
-```powershell
-powershell -ExecutionPolicy Bypass -File .\mouse_jiggler.ps1
-```
-
-If you want to use PowerShell 7 specifically:
-
-```powershell
-pwsh -File .\mouse_jiggler.ps1
+\release-assets\move_mouse.exe
 ```
 
 

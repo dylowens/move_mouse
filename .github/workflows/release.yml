@@ -22,15 +22,12 @@ jobs:
           dotnet-version: "9.0.x"
 
       - name: Build EXE
-
         run: dotnet publish .\MouseJigglerExe\MouseJigglerExe.csproj -c Release -r win-x64 -o .\release-assets
-
 
       - name: Upload release asset
         if: github.event_name == 'release'
         uses: softprops/action-gh-release@v2
         with:
-
-          files: .\release-assets\move_mouse.exe
+          files: ./release-assets/move_mouse.exe
           fail_on_unmatched_files: true
 
