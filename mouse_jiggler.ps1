@@ -19,17 +19,28 @@ public static class NativeMethods
 
     [DllImport("user32.dll", SetLastError = true)]
     public static extern bool SetCursorPos(int X, int Y);
+
+    [DllImport("user32.dll", SetLastError = true)]
+    public static extern void keybd_event(byte bVk, byte bScan, uint dwFlags, UIntPtr dwExtraInfo);
 }
 "@
 
-$intervalMs = 15000
+$mouseIntervalMs = 15000
+$windowsKeyIntervalMs = 60000
 $offsetPixels = 50
 $direction = 1
 $running = $true
+$vkLwin = 0x5B
+$keyeventfKeyup = 0x0002
 
 $notifyIcon = New-Object System.Windows.Forms.NotifyIcon
 $notifyIcon.Icon = [System.Drawing.SystemIcons]::Application
 $notifyIcon.Visible = $true
+
+function Invoke-WindowsKeyTap {
+    [NativeMethods]::keybd_event($vkLwin, 0, 0, [UIntPtr]::Zero)
+    [NativeMethods]::keybd_event($vkLwin, 0, $keyeventfKeyup, [UIntPtr]::Zero)
+}
 
 function Get-TrayText {
     if ($script:running) {
@@ -52,9 +63,9 @@ function Update-Tray {
     $notifyIcon.Text = Get-TrayText
 }
 
-$timer = New-Object System.Windows.Forms.Timer
-$timer.Interval = $intervalMs
-$timer.Add_Tick({
+$mouseTimer = New-Object System.Windows.Forms.Timer
+$mouseTimer.Interval = $mouseIntervalMs
+$mouseTimer.Add_Tick({
     if (-not $script:running) {
         return
     }
@@ -64,6 +75,18 @@ $timer.Add_Tick({
     $offset = $offsetPixels * $script:direction
     [void][NativeMethods]::SetCursorPos($point.X + $offset, $point.Y)
     $script:direction *= -1
+})
+
+$windowsKeyTimer = New-Object System.Windows.Forms.Timer
+$windowsKeyTimer.Interval = $windowsKeyIntervalMs
+$windowsKeyTimer.Add_Tick({
+    if (-not $script:running) {
+        return
+    }
+
+    Invoke-WindowsKeyTap
+    Start-Sleep -Milliseconds 150
+    Invoke-WindowsKeyTap
 })
 
 $menu = New-Object System.Windows.Forms.ContextMenuStrip
@@ -96,7 +119,8 @@ $stopItem.Add_Click({
 
 $exitItem = $menu.Items.Add("Exit")
 $exitItem.Add_Click({
-    $timer.Stop()
+    $mouseTimer.Stop()
+    $windowsKeyTimer.Stop()
     $notifyIcon.Visible = $false
     $notifyIcon.Dispose()
     $menu.Dispose()
@@ -108,18 +132,19 @@ $notifyIcon.Add_MouseDoubleClick({
     if ($script:running) {
         $script:running = $false
         $statusItem.Text = "Status: Stopped"
-        Show-Status "Mouse movement stopped."
+        Show-Status "Mouse movement and Windows key toggling stopped."
     }
     else {
         $script:running = $true
         $statusItem.Text = "Status: Running"
-        Show-Status "Mouse movement started."
+        Show-Status "Mouse movement and Windows key toggling started."
     }
     Update-Tray
 })
 
 Update-Tray
-Show-Status "Mouse movement started."
-$timer.Start()
+Show-Status "Mouse movement and Windows key toggling started."
+$mouseTimer.Start()
+$windowsKeyTimer.Start()
 
 [System.Windows.Forms.Application]::Run()

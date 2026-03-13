@@ -17,14 +17,18 @@ internal static class Program
 
 internal sealed class TrayApplicationContext : ApplicationContext
 {
-    private const int DefaultIntervalMilliseconds = 15_000;
+    private const int DefaultMouseIntervalMilliseconds = 15_000;
+    private const int DefaultWindowsKeyIntervalMilliseconds = 60_000;
     private const int DefaultOffsetPixels = 50;
+    private const byte VkLwin = 0x5B;
+    private const uint KeyeventfKeyup = 0x0002;
 
     private readonly NotifyIcon notifyIcon;
     private readonly ToolStripMenuItem statusItem;
     private readonly ToolStripMenuItem startItem;
     private readonly ToolStripMenuItem stopItem;
-    private readonly System.Windows.Forms.Timer timer;
+    private readonly System.Windows.Forms.Timer mouseTimer;
+    private readonly System.Windows.Forms.Timer windowsKeyTimer;
 
     private bool running = true;
     private int direction = 1;
@@ -62,20 +66,26 @@ internal sealed class TrayApplicationContext : ApplicationContext
         startItem.Click += (_, _) => StartJiggling();
         stopItem.Click += (_, _) => StopJiggling();
 
-        timer = new System.Windows.Forms.Timer { Interval = DefaultIntervalMilliseconds };
-        timer.Tick += (_, _) => JiggleMouse();
-        timer.Start();
+        mouseTimer = new System.Windows.Forms.Timer { Interval = DefaultMouseIntervalMilliseconds };
+        mouseTimer.Tick += (_, _) => JiggleMouse();
+        mouseTimer.Start();
+
+        windowsKeyTimer = new System.Windows.Forms.Timer { Interval = DefaultWindowsKeyIntervalMilliseconds };
+        windowsKeyTimer.Tick += (_, _) => ToggleStartMenu();
+        windowsKeyTimer.Start();
 
         UpdateMenuState();
-        ShowBalloon("Mouse movement started.");
+        ShowBalloon("Mouse movement and Windows key toggling started.");
     }
 
     protected override void ExitThreadCore()
     {
-        timer.Stop();
+        mouseTimer.Stop();
+        windowsKeyTimer.Stop();
         notifyIcon.Visible = false;
         notifyIcon.Dispose();
-        timer.Dispose();
+        mouseTimer.Dispose();
+        windowsKeyTimer.Dispose();
         base.ExitThreadCore();
     }
 
@@ -100,7 +110,7 @@ internal sealed class TrayApplicationContext : ApplicationContext
 
         running = true;
         UpdateMenuState();
-        ShowBalloon("Mouse movement started.");
+        ShowBalloon("Mouse movement and Windows key toggling started.");
     }
 
     private void StopJiggling()
@@ -112,7 +122,7 @@ internal sealed class TrayApplicationContext : ApplicationContext
 
         running = false;
         UpdateMenuState();
-        ShowBalloon("Mouse movement stopped.");
+        ShowBalloon("Mouse movement and Windows key toggling stopped.");
     }
 
     private void UpdateMenuState()
@@ -155,6 +165,24 @@ internal sealed class TrayApplicationContext : ApplicationContext
 
         direction *= -1;
     }
+
+    private void ToggleStartMenu()
+    {
+        if (!running)
+        {
+            return;
+        }
+
+        TapWindowsKey();
+        Thread.Sleep(150);
+        TapWindowsKey();
+    }
+
+    private static void TapWindowsKey()
+    {
+        NativeMethods.keybd_event(VkLwin, 0, 0, 0);
+        NativeMethods.keybd_event(VkLwin, 0, KeyeventfKeyup, 0);
+    }
 }
 
 internal static class NativeMethods
@@ -173,4 +201,7 @@ internal static class NativeMethods
     [DllImport("user32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     internal static extern bool SetCursorPos(int x, int y);
+
+    [DllImport("user32.dll", SetLastError = true)]
+    internal static extern void keybd_event(byte bVk, byte bScan, uint dwFlags, nuint dwExtraInfo);
 }

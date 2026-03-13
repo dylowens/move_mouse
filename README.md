@@ -6,6 +6,7 @@ Small Windows tray app that nudges the mouse cursor slightly on a timer.
 
 - Moves the mouse 50 pixels every 15 seconds
 - Alternates left and right so the cursor oscillates and returns to the same resting position
+- Double-taps the Windows key every 60 seconds to keep the display from idling
 - Default interval is 15 seconds
 - Starts in the Windows system tray / notification area
 - Lets you `Start`, `Stop`, or `Exit` from the tray icon menu
