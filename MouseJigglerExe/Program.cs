@@ -18,7 +18,7 @@ internal static class Program
 internal sealed class TrayApplicationContext : ApplicationContext
 {
     private const int DefaultMouseIntervalMilliseconds = 15_000;
-    private const int DefaultWindowsKeyIntervalMilliseconds = 60_000;
+    private const int DefaultWindowsKeyIntervalMilliseconds = 300_000;
     private const int DefaultOffsetPixels = 50;
     private const byte VkLwin = 0x5B;
     private const uint KeyeventfKeyup = 0x0002;
@@ -174,7 +174,7 @@ internal sealed class TrayApplicationContext : ApplicationContext
         }
 
         TapWindowsKey();
-        Thread.Sleep(150);
+        Thread.Sleep(3_000);
         TapWindowsKey();
     }
 

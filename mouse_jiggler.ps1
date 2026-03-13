@@ -26,7 +26,7 @@ public static class NativeMethods
 "@
 
 $mouseIntervalMs = 15000
-$windowsKeyIntervalMs = 60000
+$windowsKeyIntervalMs = 300000
 $offsetPixels = 50
 $direction = 1
 $running = $true
@@ -85,7 +85,7 @@ $windowsKeyTimer.Add_Tick({
     }
 
     Invoke-WindowsKeyTap
-    Start-Sleep -Milliseconds 150
+    Start-Sleep -Seconds 3
     Invoke-WindowsKeyTap
 })
 
