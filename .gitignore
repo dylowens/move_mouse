@@ -1,6 +1,9 @@
 build/
+
 bin/
 obj/
 *.exe
 *.pdb
+
 release-assets/
+

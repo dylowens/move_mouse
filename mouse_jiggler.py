@@ -4,6 +4,28 @@ import threading
 from ctypes import wintypes
 
 
+def _ensure_wintypes_aliases():
+    void_ptr = ctypes.c_void_p
+    aliases = {
+        "ATOM": wintypes.WORD,
+        "HINSTANCE": void_ptr,
+        "HMODULE": void_ptr,
+        "HICON": void_ptr,
+        "HCURSOR": void_ptr,
+        "HBRUSH": void_ptr,
+        "HMENU": void_ptr,
+        "LPVOID": void_ptr,
+        "UINT_PTR": ctypes.c_size_t,
+        "LPCRECT": ctypes.POINTER(wintypes.RECT),
+    }
+    for name, value in aliases.items():
+        if not hasattr(wintypes, name):
+            setattr(wintypes, name, value)
+
+
+_ensure_wintypes_aliases()
+
+
 user32 = ctypes.WinDLL("user32", use_last_error=True)
 kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
 shell32 = ctypes.WinDLL("shell32", use_last_error=True)
@@ -49,7 +71,7 @@ ID_TRAY_STOP = 1003
 ID_TRAY_EXIT = 1004
 
 DEFAULT_INTERVAL_SECONDS = 15
-DEFAULT_OFFSET_PIXELS = 1
+DEFAULT_OFFSET_PIXELS = 50
 TRAY_TIP = "Mouse Jiggler"
 TRAY_INFO_TITLE = "Mouse Jiggler"
 
